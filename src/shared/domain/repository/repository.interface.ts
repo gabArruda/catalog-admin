@@ -18,7 +18,8 @@ export interface IRepository<E extends Entity, EntityId extends ValueObject> {
 export interface ISearchableRepository<
   E extends Entity,
   EntityId extends ValueObject,
-  searchInput = SearchInput,
+  Filter = string,
+  searchInput = SearchInput<Filter>,
   searchOutput = SearchOutput
 > extends IRepository<E, EntityId> {
   sortableFields: string[];
