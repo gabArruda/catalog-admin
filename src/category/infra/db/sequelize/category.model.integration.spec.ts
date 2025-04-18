@@ -1,24 +1,10 @@
-import { Sequelize } from "sequelize-typescript";
 import { CategoryModel } from "./category.model";
 import { CategoryBuilder } from "../../../domain/category.builder";
 import { Uuid } from "../../../../shared/domain/value-objects/uuid.value-object";
+import { setupSequelize } from "../../../../shared/infra/testing/helpers";
 
 describe("CategoryModel Integration Tests", () => {
-  let sequelize: Sequelize;
-
-  beforeEach(async () => {
-    sequelize = new Sequelize({
-      dialect: "sqlite",
-      storage: ":memory:",
-      models: [CategoryModel],
-      logging: false,
-    });
-    await sequelize.sync({ force: true });
-  });
-
-  afterAll(async () => {
-    await sequelize.close();
-  });
+  setupSequelize({ models: [CategoryModel] });
   it("should insert and retrieve a category", async () => {
     const categoryBuilder = new CategoryBuilder().build();
     const categoryProps = {

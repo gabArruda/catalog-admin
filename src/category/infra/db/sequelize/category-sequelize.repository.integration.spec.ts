@@ -1,28 +1,18 @@
-import { Sequelize } from "sequelize-typescript";
 import { CategoryModel } from "./category.model";
 import { CategoryBuilder } from "../../../domain/category.builder";
 import { Uuid } from "../../../../shared/domain/value-objects/uuid.value-object";
 import { NotFoundError } from "../../../../shared/domain/errors/not-found.error";
 import { CategorySequelizeRepository } from "./category-sequelize.repository";
 import { CategorySearchInput } from "../../../domain/category.repository.interface";
+import { setupSequelize } from "../../../../shared/infra/testing/helpers";
 
 describe("CategorySequelizeRepository Integration Tests", () => {
-  let sequelize: Sequelize;
   let categoryRepository: CategorySequelizeRepository;
 
-  beforeEach(async () => {
-    sequelize = new Sequelize({
-      dialect: "sqlite",
-      storage: ":memory:",
-      models: [CategoryModel],
-      logging: false,
-    });
-    await sequelize.sync({ force: true });
-    categoryRepository = new CategorySequelizeRepository(CategoryModel);
-  });
+  setupSequelize({ models: [CategoryModel] });
 
-  afterAll(async () => {
-    await sequelize.close();
+  beforeEach(() => {
+    categoryRepository = new CategorySequelizeRepository(CategoryModel);
   });
 
   describe("search method tests", () => {

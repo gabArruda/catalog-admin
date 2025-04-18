@@ -1,30 +1,15 @@
-import { Sequelize } from "sequelize-typescript";
 import { CategoryModel } from "./category.model";
 import { Category } from "../../../domain/category.entity";
 import { Uuid } from "../../../../shared/domain/value-objects/uuid.value-object";
 import Chance from "chance";
 import { CategoryModelMapper } from "./category-model-mapper";
 import { EntityValidationError } from "../../../../shared/domain/errors/validation.error";
+import { setupSequelize } from "../../../../shared/infra/testing/helpers";
 
 const chance = new Chance();
 
 describe("CategoryModelMapper Integration", () => {
-  let sequelize: Sequelize;
-
-  beforeEach(async () => {
-    sequelize = new Sequelize({
-      dialect: "sqlite",
-      storage: ":memory:",
-      logging: false,
-    });
-
-    sequelize.addModels([CategoryModel]);
-    await sequelize.sync();
-  });
-
-  afterAll(async () => {
-    await sequelize.close();
-  });
+  setupSequelize({ models: [CategoryModel] });
 
   const baseProps = {
     category_id: new Uuid(),
