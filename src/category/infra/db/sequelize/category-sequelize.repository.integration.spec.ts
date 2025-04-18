@@ -1,10 +1,10 @@
 import { Sequelize } from "sequelize-typescript";
 import { CategoryModel } from "./category.model";
-import { CategorySequelizeRepository } from "./category-sequelize.repository";
 import { CategoryBuilder } from "../../../domain/category.builder";
 import { Uuid } from "../../../../shared/domain/value-objects/uuid.value-object";
-import _ from "lodash";
 import { NotFoundError } from "../../../../shared/domain/errors/not-found.error";
+import { CategorySequelizeRepository } from "./category-sequelize.repository";
+import { CategorySearchInput } from "../../../domain/category.repository.interface";
 
 describe("CategorySequelizeRepository Integration Tests", () => {
   let sequelize: Sequelize;
@@ -25,7 +25,117 @@ describe("CategorySequelizeRepository Integration Tests", () => {
     await sequelize.close();
   });
 
-  // TODO: Create tests for the search
+  describe("search method tests", () => {
+    it("should return paginated and filtered results", async () => {
+      const builder = new CategoryBuilder();
+      const categoryA = builder.withName("Node").build();
+      const categoryB = builder.withName("Nest").build();
+      const categoryC = builder.withName("Express").build();
+
+      await categoryRepository.bulkInsert([categoryA, categoryB, categoryC]);
+
+      const input = new CategorySearchInput({
+        page: 1,
+        per_page: 2,
+        filter: "s",
+        sort: "name",
+        sort_dir: "asc",
+      });
+
+      const output = await categoryRepository.search(input);
+
+      expect(output.total).toBe(2);
+      expect(output.items.length).toBe(2);
+      expect(output.items[0].name).toBe("Express");
+      expect(output.items[1].name).toBe("Nest");
+    });
+
+    it("should sort by created_at desc when no sort is given", async () => {
+      const now = new Date();
+      const builder = new CategoryBuilder();
+      const categoryA = builder
+        .withName("Category A")
+        .withCreatedAt(new Date(now.getTime() - 1000))
+        .build();
+      const categoryB = builder
+        .withName("Category B")
+        .withCreatedAt(now)
+        .build();
+
+      await categoryRepository.bulkInsert([categoryA, categoryB]);
+
+      const input = new CategorySearchInput({
+        page: 1,
+        per_page: 10,
+      });
+
+      const output = await categoryRepository.search(input);
+
+      expect(output.items[0].name).toBe("Category B");
+      expect(output.items[1].name).toBe("Category A");
+    });
+
+    it("should return empty result for unmatched filter", async () => {
+      const category = new CategoryBuilder().withName("JavaScript").build();
+      await categoryRepository.insert(category);
+
+      const input = new CategorySearchInput({
+        page: 1,
+        per_page: 5,
+        filter: "Python",
+      });
+
+      const output = await categoryRepository.search(input);
+
+      expect(output.total).toBe(0);
+      expect(output.items).toHaveLength(0);
+    });
+
+    it("should handle pagination correctly", async () => {
+      const builder = new CategoryBuilder();
+      const categories = builder.buildMany(5, [
+        { name: "One" },
+        { name: "Two" },
+        { name: "Three" },
+        { name: "Four" },
+        { name: "Five" },
+      ]);
+
+      await categoryRepository.bulkInsert(categories);
+
+      const input = new CategorySearchInput({
+        page: 2,
+        per_page: 2,
+        sort: "name",
+        sort_dir: "asc",
+      });
+
+      const output = await categoryRepository.search(input);
+
+      expect(output.total).toBe(5);
+      expect(output.current_page).toBe(2);
+      expect(output.items).toHaveLength(2);
+      expect(output.items[0].name).toBe("One");
+      expect(output.items[1].name).toBe("Three");
+    });
+
+    it("should not crash on invalid sort field (defaults to created_at)", async () => {
+      const builder = new CategoryBuilder();
+      const category = builder.build();
+      await categoryRepository.insert(category);
+
+      const input = new CategorySearchInput({
+        page: 1,
+        per_page: 1,
+        sort: "invalid_field" as any,
+      });
+
+      const output = await categoryRepository.search(input);
+
+      expect(output.total).toBe(1);
+      expect(output.items[0].name).toBe(category.name);
+    });
+  });
 
   it("should insert a category", async () => {
     let category = new CategoryBuilder().build();
