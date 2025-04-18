@@ -50,20 +50,24 @@ export class Category extends Entity {
 
   changeName(name: string): void {
     this.name = name;
+    this.updated_at = new Date();
     Category.validate(this);
   }
 
   changeDescription(description: string): void {
     this.description = description;
+    this.updated_at = new Date();
     Category.validate(this);
   }
 
   activate() {
     this.is_active = true;
+    this.updated_at = new Date();
   }
 
   deactivate() {
     this.is_active = false;
+    this.updated_at = new Date();
   }
 
   static validate(entity: Category) {
