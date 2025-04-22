@@ -1,135 +1,100 @@
-import { EntityValidationError } from "../../shared/domain/errors/validation.error";
 import { Uuid } from "../../shared/domain/value-objects/uuid.value-object";
 import { Category } from "./category.entity";
 
-describe("Category unit tests", () => {
-  let validateSpy: jest.SpyInstance<void, [entity: Category], any>;
+describe("Category Entity Unit Tests", () => {
   beforeEach(() => {
-    validateSpy = jest.spyOn(Category, "validate");
-  });
-  describe("constructor", () => {
-    it("should create a category with default values", () => {
-      const category = new Category({
-        name: "Movie",
-      });
-      expect(category.category_id).toBeInstanceOf(Uuid);
-      expect(category.name).toBe("Movie");
-      expect(category.description).toBeNull();
-      expect(category.is_active).toBeFalsy();
-      expect(category.created_at).toBeInstanceOf(Date);
-      expect(category.updated_at).toBeInstanceOf(Date);
-    });
-
-    it("should create a category with optional values", () => {
-      const uuid = new Uuid();
-      const category = new Category({
-        category_id: uuid,
-        name: "TV Show",
-        description: "TV Show description",
-        is_active: true,
-      });
-      expect(category.category_id).toEqual(uuid);
-      expect(category.name).toBe("TV Show");
-      expect(category.description).toBe("TV Show description");
-      expect(category.is_active).toBeTruthy();
-      expect(category.created_at).toBeInstanceOf(Date);
-      expect(category.updated_at).toBeInstanceOf(Date);
-    });
+    Category.prototype.validate = jest
+      .fn()
+      .mockImplementation(Category.prototype.validate);
   });
 
-  describe("create command", () => {
-    it("should create a category with default values", () => {
-      const category = Category.create({
-        name: "Movie",
-      });
-      expect(category.category_id).toBeInstanceOf(Uuid);
-      expect(category.name).toBe("Movie");
-      expect(category.description).toBeNull();
-      expect(category.is_active).toBeFalsy();
-      expect(category.created_at).toBeInstanceOf(Date);
-      expect(category.updated_at).toBeInstanceOf(Date);
-      expect(validateSpy).toHaveBeenCalledTimes(1);
-    });
+  it("should create with default values", () => {
+    const category = new Category({ name: "Test" });
 
-    it("should create a category with optional values", () => {
-      const category = Category.create({
-        name: "TV Show",
-        description: "TV Show description",
-        is_active: true,
-      });
-      expect(category.category_id).toBeInstanceOf(Uuid);
-      expect(category.name).toBe("TV Show");
-      expect(category.description).toBe("TV Show description");
-      expect(category.is_active).toBeTruthy();
-      expect(category.created_at).toBeInstanceOf(Date);
-      expect(category.updated_at).toBeInstanceOf(Date);
-      expect(validateSpy).toHaveBeenCalledTimes(1);
+    expect(category.name).toBe("Test");
+    expect(category.description).toBeNull();
+    expect(category.is_active).toBe(false);
+    expect(category.created_at).toBeInstanceOf(Date);
+    expect(category.updated_at).toBeInstanceOf(Date);
+    expect(category.category_id).toBeInstanceOf(Uuid);
+  });
+
+  it("should use static create with validation", () => {
+    const category = Category.create({ name: "Movie" });
+
+    expect(category.name).toBe("Movie");
+    expect(category.validate).toHaveBeenCalledTimes(1);
+    expect(category.validate).toHaveBeenCalledWith(["name"]);
+  });
+
+  it("should change name and update updated_at", async () => {
+    const category = new Category({ name: "Old" });
+    const oldDate = category.updated_at;
+
+    await new Promise((r) => setTimeout(r, 10));
+    category.changeName("New");
+
+    expect(category.name).toBe("New");
+    expect(category.updated_at.getTime()).toBeGreaterThan(oldDate.getTime());
+    expect(category.validate).toHaveBeenCalledTimes(1);
+    expect(category.validate).toHaveBeenCalledWith(["name"]);
+  });
+
+  it("should change description and update updated_at", async () => {
+    const category = new Category({ name: "Test", description: "Old" });
+    const oldDate = category.updated_at;
+
+    await new Promise((r) => setTimeout(r, 1));
+    category.changeDescription("New");
+
+    expect(category.description).toBe("New");
+    expect(category.updated_at.getTime()).toBeGreaterThan(oldDate.getTime());
+    expect(category.validate).not.toHaveBeenCalled();
+  });
+
+  it("should activate and deactivate", async () => {
+    const category = new Category({ name: "Test", is_active: false });
+    const oldDate = category.updated_at;
+
+    await new Promise((r) => setTimeout(r, 1));
+    category.activate();
+    expect(category.is_active).toBe(true);
+
+    await new Promise((r) => setTimeout(r, 1));
+    category.deactivate();
+    expect(category.is_active).toBe(false);
+    expect(category.updated_at.getTime()).toBeGreaterThan(oldDate.getTime());
+    expect(category.validate).not.toHaveBeenCalled();
+  });
+
+  it("should return correct JSON", () => {
+    const category = new Category({
+      name: "Test",
+      description: "desc",
+      is_active: true,
+    });
+    const json = category.toJSON();
+
+    expect(json).toEqual({
+      category_id: category.category_id.id,
+      name: "Test",
+      description: "desc",
+      is_active: true,
+      created_at: category.created_at,
+      updated_at: category.updated_at,
     });
   });
 
-  describe("methods that update a value", () => {
-    it("should change category name", () => {
-      const category = Category.create({
-        name: "Movie",
-      });
-      category.changeName("TV Show");
-      expect(category.name).toBe("TV Show");
-      expect(validateSpy).toHaveBeenCalledTimes(2);
-    });
+  it("should has notification errors when invalid name on creation", () => {
+    const category = Category.create({ name: "t".repeat(256) });
 
-    it("should change category description", () => {
-      const category = Category.create({
-        name: "Movie",
-      });
-      expect(category.description).toBeNull();
-      category.changeDescription("Movie description");
-      expect(category.description).toBe("Movie description");
-      expect(validateSpy).toHaveBeenCalledTimes(2);
-    });
-
-    it("should activate and deactivate a category", () => {
-      const category = Category.create({
-        name: "Movie",
-      });
-      expect(category.is_active).toBeFalsy();
-      category.activate();
-      expect(category.is_active).toBeTruthy();
-      category.deactivate();
-      expect(category.is_active).toBeFalsy();
-    });
+    expect(category.notification.hasErrors()).toBeTruthy();
   });
-});
 
-describe("Category validator tests", () => {
-  describe("create command", () => {
-    it("should throw when name is invalid", () => {
-      expect(() => {
-        Category.create({ name: "" });
-      }).toThrow(EntityValidationError);
-      expect(() => {
-        Category.create({ name: null as unknown as string });
-      }).toThrow(EntityValidationError);
-      expect(() => {
-        Category.create({ name: "a".repeat(256) });
-      }).toThrow(EntityValidationError);
-      expect(() => {
-        Category.create({ name: 10 as unknown as string });
-      }).toThrow(EntityValidationError);
-    });
+  it("should has notification errors when invalid name on updating name", () => {
+    const category = Category.create({ name: "Movie" });
+    category.changeName("t".repeat(256));
 
-    it("should throw when description is invalid", () => {
-      expect(() => {
-        Category.create({ name: "test", description: 10 as unknown as string });
-      }).toThrow(EntityValidationError);
-    });
-
-    it("should throw when is_active is invalid", () => {
-      expect(() => {
-        Category.create({ name: "test", is_active: 10 as unknown as boolean });
-      }).toThrow(EntityValidationError);
-      expect(() => {
-        Category.create({ name: "test", is_active: "" as unknown as boolean });
-      }).toThrow(EntityValidationError);
-    });
+    expect(category.notification.hasErrors()).toBeTruthy();
   });
 });

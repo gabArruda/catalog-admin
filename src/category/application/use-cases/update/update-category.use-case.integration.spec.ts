@@ -1,3 +1,4 @@
+import { Chance } from "chance";
 import { NotFoundError } from "../../../../shared/domain/errors/not-found.error";
 import {
   InvalidUuidError,
@@ -8,7 +9,9 @@ import { CategoryBuilder } from "../../../domain/category.builder";
 import { CategorySequelizeRepository } from "../../../infra/db/sequelize/category-sequelize.repository";
 import { CategoryModel } from "../../../infra/db/sequelize/category.model";
 import { UpdateCategoryUseCase } from "./update-category.use-case";
+import { EntityValidationError } from "../../../../shared/domain/errors/validation.error";
 
+const chance = new Chance();
 describe("UpdateCategoryUseCase Integration Tests", () => {
   let useCase: UpdateCategoryUseCase;
   let repository: CategorySequelizeRepository;
@@ -106,5 +109,18 @@ describe("UpdateCategoryUseCase Integration Tests", () => {
     expect(output.description).toBe(null);
     expect(output.is_active).toBe(true);
     expect(output.updated_at.getTime()).toEqual(beforeUpdate.getTime());
+  });
+
+  it("should throw when model has invalid name", async () => {
+    const category = new CategoryBuilder().withName("Initial Name").build();
+
+    await repository.insert(category);
+
+    await expect(
+      useCase.execute({
+        category_id: category.category_id.id,
+        name: chance.word({ length: 256 }),
+      })
+    ).rejects.toThrow(EntityValidationError);
   });
 });

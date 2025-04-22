@@ -70,7 +70,7 @@ export class CategoryBuilder {
       updated_at: getValue("updated_at", () => new Date()),
     });
 
-    Category.validate(category);
+    category.validate();
     return category;
   }
 

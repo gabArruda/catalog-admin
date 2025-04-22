@@ -7,7 +7,7 @@ jest.mock("./category.entity", () => {
   return {
     ...original,
     Category: class extends original.Category {
-      static validate = jest.fn();
+      validate = jest.fn();
     },
   };
 });
@@ -19,8 +19,7 @@ describe("CategoryBuilder Unit Tests", () => {
 
     expect(category).toBeInstanceOf(Category);
     expect(typeof category.name).toBe("string");
-    expect(Category.validate).toHaveBeenCalledTimes(1);
-    expect(Category.validate).toHaveBeenCalledWith(category);
+    expect(category.validate).toHaveBeenCalledTimes(1);
   });
 
   it("should use custom values when provided", () => {
@@ -40,8 +39,7 @@ describe("CategoryBuilder Unit Tests", () => {
     expect(category.is_active).toBe(true);
     expect(category.created_at).toBe(customDate);
     expect(category.updated_at).toBe(customDate);
-    expect(Category.validate).toHaveBeenCalledTimes(1);
-    expect(Category.validate).toHaveBeenCalledWith(category);
+    expect(category.validate).toHaveBeenCalledTimes(1);
   });
 
   it("should reset builder state after build()", () => {
@@ -83,7 +81,7 @@ describe("CategoryBuilder Unit Tests", () => {
     expect(categories[2].is_active).toBe(false);
 
     for (const category of categories) {
-      expect(Category.validate).toHaveBeenCalledWith(category);
+      expect(category.validate).toHaveBeenCalled();
     }
   });
 

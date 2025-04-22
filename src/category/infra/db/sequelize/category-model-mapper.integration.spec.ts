@@ -49,16 +49,16 @@ describe("CategoryModelMapper Integration", () => {
       expect(entity.description).toBe(model.description);
     });
 
-    it("should throw when model has missing required fields", () => {
+    it("should throw when model has invalid name", () => {
       const invalidModel = {
         ...baseProps,
         category_id: baseProps.category_id.id,
         name: chance.word({ length: 256 }),
       } as any as CategoryModel;
 
-      expect(() => {
-        CategoryModelMapper.toEntity(invalidModel);
-      }).toThrow(EntityValidationError);
+      expect(() => CategoryModelMapper.toEntity(invalidModel)).toThrow(
+        EntityValidationError
+      );
     });
   });
 });

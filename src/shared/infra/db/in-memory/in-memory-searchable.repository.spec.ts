@@ -95,7 +95,7 @@ describe("InMemorySearchableRepository Unit Tests", () => {
   });
 
   describe("applySort method", () => {
-    it("should no sort items", async () => {
+    it("should not sort items", async () => {
       const items = [
         new StubEntity({ name: "b", price: 5 }),
         new StubEntity({ name: "a", price: 5 }),
@@ -120,6 +120,34 @@ describe("InMemorySearchableRepository Unit Tests", () => {
 
       itemsSorted = await repository["applySort"](items, "name", "desc");
       expect(itemsSorted).toStrictEqual([items[2], items[0], items[1]]);
+    });
+
+    it("should sort using custom getter", async () => {
+      const items = [
+        new StubEntity({ name: "Charlie", price: 3 }),
+        new StubEntity({ name: "Bravo", price: 2 }),
+        new StubEntity({ name: "Alpha", price: 1 }),
+      ];
+
+      const sorted = repository["applySort"](items, "name", "asc", (_, item) =>
+        item.name.toLowerCase()
+      );
+
+      expect(sorted.map((i) => i.name)).toEqual(["Alpha", "Bravo", "Charlie"]);
+    });
+
+    it("should sort using custom getter in descending order", async () => {
+      const items = [
+        new StubEntity({ name: "Charlie", price: 3 }),
+        new StubEntity({ name: "Bravo", price: 2 }),
+        new StubEntity({ name: "Alpha", price: 1 }),
+      ];
+
+      const sorted = repository["applySort"](items, "name", "desc", (_, item) =>
+        item.name.toLowerCase()
+      );
+
+      expect(sorted.map((i) => i.name)).toEqual(["Charlie", "Bravo", "Alpha"]);
     });
   });
 
