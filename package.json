@@ -4,7 +4,8 @@
   "description": "Micro service responsible for videos, categories, genres, cast members",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --coverage",
+    "tsc:check": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
