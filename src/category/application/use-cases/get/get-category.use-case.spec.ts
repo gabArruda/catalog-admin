@@ -1,10 +1,10 @@
-import { NotFoundError } from "../../../shared/domain/errors/not-found.error";
+import { NotFoundError } from "../../../../shared/domain/errors/not-found.error";
 import {
   InvalidUuidError,
   Uuid,
-} from "../../../shared/domain/value-objects/uuid.value-object";
-import { CategoryBuilder } from "../../domain/category.builder";
-import { CategoryInMemoryRepository } from "../../infra/db/in-memory/category-in-memory.repository";
+} from "../../../../shared/domain/value-objects/uuid.value-object";
+import { CategoryBuilder } from "../../../domain/category.builder";
+import { CategoryInMemoryRepository } from "../../../infra/db/in-memory/category-in-memory.repository";
 import { GetCategoryUseCase } from "./get-category.use-case";
 
 describe("GetCategoryUseCase Unit Tests", () => {

@@ -1,18 +1,22 @@
-import { NotFoundError } from "../../../shared/domain/errors/not-found.error";
+import { NotFoundError } from "../../../../shared/domain/errors/not-found.error";
 import {
   InvalidUuidError,
   Uuid,
-} from "../../../shared/domain/value-objects/uuid.value-object";
-import { CategoryBuilder } from "../../domain/category.builder";
-import { CategoryInMemoryRepository } from "../../infra/db/in-memory/category-in-memory.repository";
+} from "../../../../shared/domain/value-objects/uuid.value-object";
+import { setupSequelize } from "../../../../shared/infra/testing/helpers";
+import { CategoryBuilder } from "../../../domain/category.builder";
+import { CategorySequelizeRepository } from "../../../infra/db/sequelize/category-sequelize.repository";
+import { CategoryModel } from "../../../infra/db/sequelize/category.model";
 import { DeleteCategoryUseCase } from "./delete-category.use-case";
 
-describe("CreateCategoryUseCase Unit Tests", () => {
+describe("CreateCategoryUseCase Integration Tests", () => {
   let useCase: DeleteCategoryUseCase;
-  let repository: CategoryInMemoryRepository;
+  let repository: CategorySequelizeRepository;
+
+  setupSequelize({ models: [CategoryModel] });
 
   beforeEach(() => {
-    repository = new CategoryInMemoryRepository();
+    repository = new CategorySequelizeRepository(CategoryModel);
     useCase = new DeleteCategoryUseCase(repository);
   });
 

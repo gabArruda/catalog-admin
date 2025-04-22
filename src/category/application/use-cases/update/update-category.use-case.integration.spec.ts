@@ -1,12 +1,12 @@
-import { NotFoundError } from "../../../shared/domain/errors/not-found.error";
+import { NotFoundError } from "../../../../shared/domain/errors/not-found.error";
 import {
   InvalidUuidError,
   Uuid,
-} from "../../../shared/domain/value-objects/uuid.value-object";
-import { setupSequelize } from "../../../shared/infra/testing/helpers";
-import { CategoryBuilder } from "../../domain/category.builder";
-import { CategorySequelizeRepository } from "../../infra/db/sequelize/category-sequelize.repository";
-import { CategoryModel } from "../../infra/db/sequelize/category.model";
+} from "../../../../shared/domain/value-objects/uuid.value-object";
+import { setupSequelize } from "../../../../shared/infra/testing/helpers";
+import { CategoryBuilder } from "../../../domain/category.builder";
+import { CategorySequelizeRepository } from "../../../infra/db/sequelize/category-sequelize.repository";
+import { CategoryModel } from "../../../infra/db/sequelize/category.model";
 import { UpdateCategoryUseCase } from "./update-category.use-case";
 
 describe("UpdateCategoryUseCase Integration Tests", () => {
