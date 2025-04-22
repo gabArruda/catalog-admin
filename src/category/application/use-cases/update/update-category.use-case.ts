@@ -5,13 +5,7 @@ import { Uuid } from "../../../../shared/domain/value-objects/uuid.value-object"
 import { Category } from "../../../domain/category.entity";
 import { ICategoryRepository } from "../../../domain/category.repository.interface";
 import { CategoryOutput } from "../shared/category.output";
-
-export type UpdateCategoryInput = {
-  category_id: string;
-  name?: string;
-  description?: string;
-  is_active?: boolean;
-};
+import { UpdateCategoryInput } from "./update-category.input";
 
 export type UpdateCategoryOutput = CategoryOutput;
 

@@ -3,12 +3,7 @@ import { EntityValidationError } from "../../../../shared/domain/errors/validati
 import { Category } from "../../../domain/category.entity";
 import { ICategoryRepository } from "../../../domain/category.repository.interface";
 import { CategoryOutput } from "../shared/category.output";
-
-export type CreateCategoryInput = {
-  name: string;
-  description?: string | null;
-  is_active?: boolean;
-};
+import { CreateCategoryInput } from "./create-category.input";
 
 export type CreateCategoryOutput = CategoryOutput;
 
