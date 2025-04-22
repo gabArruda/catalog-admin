@@ -18,7 +18,10 @@ export class CategoryBuilder {
   }
 
   withDescription(description: string | null): this {
-    this.builderState.description = description;
+    this.builderState.description =
+      description || description === null
+        ? description
+        : chance.sentence({ words: 5 });
     return this;
   }
 
@@ -61,7 +64,7 @@ export class CategoryBuilder {
     const category = new Category({
       category_id: getValue("category_id", () => new Uuid()),
       name: getValue("name", () => chance.word({ length: 10 })),
-      description: getValue("description", () => chance.sentence({ words: 5 })),
+      description: getValue("description", () => null),
       is_active: getValue("is_active", () => false),
       created_at: getValue("created_at", () => new Date()),
       updated_at: getValue("updated_at", () => new Date()),
