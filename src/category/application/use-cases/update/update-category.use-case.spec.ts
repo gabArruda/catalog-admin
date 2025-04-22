@@ -42,6 +42,7 @@ describe("UpdateCategoryUseCase Unit Tests", () => {
       description: "New Description",
     };
 
+    await new Promise((r) => setTimeout(r, 1));
     const output = await useCase.execute(input);
 
     expect(output.name).toBe("New Name");
