@@ -44,7 +44,7 @@ describe('Category Entity Unit Tests', () => {
     const category = new Category({ name: 'Test', description: 'Old' });
     const oldDate = category.updated_at;
 
-    await new Promise((r) => setTimeout(r, 1));
+    await new Promise((r) => setTimeout(r, 10));
     category.changeDescription('New');
 
     expect(category.description).toBe('New');

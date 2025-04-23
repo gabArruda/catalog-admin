@@ -12,7 +12,7 @@ services:
     environment:
       - MYSQL_DATABASE=catalog_admin
       - MYSQL_ROOT_PASSWORD=root
-    tmpfs:
-      - /var/lib/mysql
+    volumes:
+      - ./.docker/dbdata:/var/lib/mysql:delegated
     security_opt:
       - seccomp:unconfined
