@@ -41,7 +41,7 @@ describe('NotFoundErrorFilter', () => {
       .get('/stub')
       .expect(404)
       .expect({
-        statuscode: HttpStatus.NOT_FOUND,
+        statusCode: HttpStatus.NOT_FOUND,
         error: 'Not Found',
         message: 'StubEntity Not Found using ID: fake id',
       });

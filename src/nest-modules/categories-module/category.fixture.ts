@@ -7,6 +7,7 @@ const _keysInResponse = [
   'description',
   'is_active',
   'created_at',
+  'updated_at',
 ];
 
 const chance = new Chance();
@@ -165,8 +166,8 @@ export class CreateCategoryFixture {
           name: faker.withName(chance.word({ length: 256 })).build().name,
         },
         expected: {
-          message: ['name must be shorter than or equal to 255 characters'],
           ...defaultExpected,
+          message: ['name must be shorter than or equal to 255 characters'],
         },
       },
     };

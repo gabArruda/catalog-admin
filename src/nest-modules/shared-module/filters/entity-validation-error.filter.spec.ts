@@ -37,7 +37,7 @@ describe('EntityValidationErrorFilter', () => {
       .get('/stub')
       .expect(422)
       .expect({
-        statuscode: HttpStatus.UNPROCESSABLE_ENTITY,
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         error: 'Unprocessable Entity',
         message: ['another error', 'field1 is required', 'field2 is required'],
       });

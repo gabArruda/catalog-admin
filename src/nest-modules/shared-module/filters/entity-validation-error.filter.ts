@@ -32,7 +32,7 @@ export class EntityValidationErrorFilter implements ExceptionFilter {
     );
 
     response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
-      statuscode: HttpStatus.UNPROCESSABLE_ENTITY,
+      statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       error: 'Unprocessable Entity',
       message: messages,
     });
