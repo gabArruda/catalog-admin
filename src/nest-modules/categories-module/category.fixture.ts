@@ -275,18 +275,22 @@ export class ListCategoriesFixture {
       new CategoryBuilder()
         .withName('Name1')
         .withCreatedAt(new Date(date.getTime() + 2000))
+        .withUpdatedAt(new Date(date.getTime() + 2000))
         .build(),
       new CategoryBuilder()
         .withName('Name2')
         .withCreatedAt(new Date(date.getTime() + 4000))
+        .withUpdatedAt(new Date(date.getTime() + 4000))
         .build(),
       new CategoryBuilder()
         .withName('Name3')
         .withCreatedAt(new Date(date.getTime() + 6000))
+        .withUpdatedAt(new Date(date.getTime() + 6000))
         .build(),
       new CategoryBuilder()
         .withName('Name4')
         .withCreatedAt(new Date(date.getTime() + 8000))
+        .withUpdatedAt(new Date(date.getTime() + 8000))
         .build(),
     ];
 

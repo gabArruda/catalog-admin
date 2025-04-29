@@ -24,6 +24,7 @@ import {
   CategoryPresenter,
 } from './categories.presenter';
 import { SearchCategoriesDto } from './dto/search-categories.dto';
+import { CategoryOutput } from '@core/category/application/use-cases/shared/category.output';
 
 @Controller('categories')
 export class CategoriesController {
@@ -98,5 +99,9 @@ export class CategoriesController {
     id: string,
   ) {
     return this.deleteUseCase.execute({ category_id: id });
+  }
+
+  static serialize(output: CategoryOutput) {
+    return new CategoryPresenter(output);
   }
 }

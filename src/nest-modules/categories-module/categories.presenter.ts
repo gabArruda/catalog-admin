@@ -8,6 +8,7 @@ export class CategoryPresenter {
   name: string;
   description: string | null;
   is_active: boolean;
+  @Transform(({ value }: { value: Date }) => value.toISOString())
   created_at: Date;
   @Transform(({ value }: { value: Date }) => value.toISOString())
   updated_at: Date;
