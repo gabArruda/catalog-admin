@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 
 import { MigrationsModule } from './nest-modules/database-module/migrations.module';
-import { getConnectionToken } from '@nestjs/sequelize';
 import { migrator } from '@core/shared/infra/db/sequelize/migrator';
+import { getConnectionToken } from '@nestjs/sequelize';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(MigrationsModule, {

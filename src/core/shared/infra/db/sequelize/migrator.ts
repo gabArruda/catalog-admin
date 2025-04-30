@@ -1,5 +1,5 @@
 import { join } from 'path';
-import { Sequelize } from 'sequelize-typescript';
+import { Sequelize } from 'sequelize';
 import { SequelizeStorage, Umzug, UmzugOptions } from 'umzug';
 
 export function migrator(
@@ -9,7 +9,7 @@ export function migrator(
   return new Umzug({
     migrations: {
       glob: [
-        '*/infra/db/sequelize/migrations/*.{js/ts}',
+        '*/infra/db/sequelize/migrations/*.{js,ts}',
         {
           cwd: join(__dirname, '..', '..', '..', '..'),
           ignore: ['**/*.d.ts', '**/index.ts', '**/index.js'],
